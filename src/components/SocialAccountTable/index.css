@@ -1,0 +1,6 @@
+td.align-right {
+	text-align: end;
+}
+td.unbreak {
+	white-space: nowrap;
+}
