@@ -3,37 +3,84 @@ import ReactTable, { ReactTableDefaults } from 'react-table';
 import 'react-table/react-table.css';
 import { getSocialAccountQuery } from '../../parse/';
 import './index.css';
-import { columns, formatSocialAccountData,data } from './tableHelper';
+import { columns, formatSocialAccountData } from './tableHelper';
+import TableBody from './tableBody';
 export default class SocialAccountTable extends Component {
 	state = {
-		SocialAccounts: []
+		SocialAccounts: [],
+		loading: false
 	};
+
 	async componentDidMount() {
-		// const SocialAccounts = await getSocialAccountQuery().limit(25).include('influencerProfile').find();
-		// console.log(SocialAccounts);
-		// this.setState({ SocialAccounts });
+		const SocialAccounts = await getSocialAccountQuery().limit(10).include('influencerProfile').find();
+		this.setState({
+			SocialAccounts: SocialAccounts
+		});
+	}
+
+	async fetchData(state, instance) {
+		const { loading, SocialAccounts } = this.state;
+		console.log('on Fetch');
+		if (loading) {
+			return;
+		}
+		this.setState({ loading: true });
+		try {
+			const data = await getSocialAccountQuery()
+				.skip(SocialAccounts.length)
+				.limit(10)
+				.include('influencerProfile')
+				.find();
+			if (data.length > 0) {
+				this.setState({
+					SocialAccounts: [
+						...SocialAccounts,
+						...data
+					]
+				});
+			}
+		} catch (e) {
+			console.log(e);
+		}
+		this.setState({ loading: false });
 	}
 
 	render() {
-		// const data = this.state.SocialAccounts;
+		const { SocialAccounts, loading } = this.state;
 		return (
 			<ReactTable
-				data={data}
-				// resolveData={(data) => data.map(formatSocialAccountData)}
+				data={SocialAccounts}
+				resolveData={(data) => data.map(formatSocialAccountData)}
 				columns={columns}
+				TbodyComponent={TableBody}
 				column={{
 					...ReactTableDefaults.column,
 					minWidth: 120,
 					headerStyle: {
-						padding: '16px 0'
-					}
+						padding: '16px 0',
+						outline: 'none'
+					},
+					className: [
+						'cell'
+					]
 				}}
-				defaultPageSize={20}
+				showPaginationBottom={false}
 				style={{
 					height: '96vh', //fixed for scrolling
 					border: 'none'
 				}}
+				loading={loading}
+				defaultPageSize={12}
+				pageSize={this.state.SocialAccounts.length > 10 ? this.state.SocialAccounts.length + 2 : undefined}
 				className="-striped -highlight"
+				getTbodyProps={(state, rowInfo, column, instance) => {
+					return {
+						onScrollEnd: () => {
+							console.log('BASE END');
+							this.fetchData(state, instance);
+						}
+					};
+				}}
 			/>
 		);
 	}

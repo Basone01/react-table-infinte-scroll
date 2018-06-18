@@ -1,6 +1,5 @@
-td.align-right {
-	text-align: end;
-}
-td.unbreak {
-	white-space: nowrap;
+.cell{
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
