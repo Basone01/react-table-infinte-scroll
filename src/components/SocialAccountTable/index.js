@@ -8,11 +8,14 @@ import TableBody from './tableBody';
 export default class SocialAccountTable extends Component {
 	state = {
 		SocialAccounts: [],
-		loading: false
+		loading: false,
+		filter:{
+			
+		}
 	};
 
 	async componentDidMount() {
-		const SocialAccounts = await getSocialAccountQuery().limit(10).include('influencerProfile').find();
+		const SocialAccounts = await getSocialAccountQuery().limit(20).include('influencerProfile').find();
 		this.setState({
 			SocialAccounts: SocialAccounts
 		});
@@ -28,7 +31,7 @@ export default class SocialAccountTable extends Component {
 		try {
 			const data = await getSocialAccountQuery()
 				.skip(SocialAccounts.length)
-				.limit(10)
+				.limit(20)
 				.include('influencerProfile')
 				.find();
 			if (data.length > 0) {
@@ -70,8 +73,8 @@ export default class SocialAccountTable extends Component {
 					border: 'none'
 				}}
 				loading={loading}
-				defaultPageSize={12}
-				pageSize={this.state.SocialAccounts.length > 10 ? this.state.SocialAccounts.length + 2 : undefined}
+				defaultPageSize={25}
+				pageSize={SocialAccounts.length > 25 ? SocialAccounts.length + 5 : undefined}
 				className="-striped -highlight"
 				getTbodyProps={(state, rowInfo, column, instance) => {
 					return {

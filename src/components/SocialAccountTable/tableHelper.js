@@ -7,6 +7,27 @@ export const formatSocialAccountData = (account) => {
 		id: account.id
 	};
 };
+
+
+const formatDate = (date) => moment(date).format('DD/MM/YYYY-h:mm');
+const formatNumber = (number) => Number(number).toFixed(2);
+const numberSortMethod = (a, b, desc) => {
+	if (typeof a === 'string') {
+		a = Number(a);
+	}
+	if (typeof b === 'string') {
+		b = Number(b);
+	}
+	if (a > b) {
+		return 1;
+	}
+	if (a < b) {
+		return -1;
+	}
+	return 0;
+};
+
+
 export const columns = [
 	{
 		Header: 'ProfilePicture',
@@ -24,15 +45,12 @@ export const columns = [
 				}}
 			/>
 		),
-		width: 160,
-		style: {
-			textAlign: 'center'
-		}
+		width: 160
 	},
 	{
 		id: 'username',
 		Header: 'Username',
-		accessor: (acc) => <span style={{ wordBreak: 'break-all' }}>{acc.username}</span>,
+		accessor: (acc) => acc.username,
 		width: 200,
 		style: {
 			fontWeight: 'bold'
@@ -43,23 +61,25 @@ export const columns = [
 		accessor: 'follower',
 		style: {
 			justifyContent: 'flex-end'
-		}
+		}	
 	},
 	{
 		id: 'commentAvg', //require when accessor is not string
 		Header: 'CommentAvg',
-		accessor: (acc) => Number(acc.commentAvg).toFixed(2),
+		accessor: (acc) => formatNumber(acc.commentAvg),
 		style: {
 			justifyContent: 'flex-end'
-		}
+		},
+		sortMethod:numberSortMethod	
 	},
 	{
 		id: 'likeAvg',
 		Header: 'LikeAvg',
-		accessor: (acc) => Number(acc.likeAvg).toFixed(2),
+		accessor: (acc) => formatNumber(acc.likeAvg),
 		style: {
 			justifyContent: 'flex-end'
-		}
+		},
+		sortMethod:numberSortMethod	
 	},
 	{
 		Header: 'Following',
@@ -70,86 +90,69 @@ export const columns = [
 	},
 	{
 		Header: 'SocialType',
-		accessor: 'socialType',
-		style: {
-			textAlign: 'center'
-		}
+		accessor: 'socialType'
 	},
 	{
 		id: 'point',
 		Header: 'Point',
-		accessor: (acc) => Number(acc.point.toFixed(2)),
+		accessor: (acc) => formatNumber(acc.point),
 		style: {
 			justifyContent: 'flex-end'
-		}
+		},
+		sortMethod:numberSortMethod	
 	},
 	{
 		id: 'estimatedPoint',
 		Header: 'EstimatedPoint',
-		accessor: (acc) => Number(acc.estimatedPoint).toFixed(2),
+		accessor: (acc) => formatNumber(acc.estimatedPoint),
 		style: {
 			justifyContent: 'flex-end'
 		},
-		width: 160
+		width: 160,
+		sortMethod:numberSortMethod	
 	},
 	{
 		id: 'maxPoint',
 		Header: 'MaxPoint',
-		accessor: (acc) => Number(acc.maxPoint).toFixed(2),
+		accessor: (acc) => formatNumber(acc.maxPoint),
 		style: {
 			justifyContent: 'flex-end'
-		}
+		},
+		sortMethod:numberSortMethod	
 	},
 	{
 		id: 'influencerProfile',
 		Header: 'InfluencerProfile',
-		accessor: (acc) => acc.influencerProfile.objectId,
-		width: 200,
-		style: {
-			textAlign: 'center'
-		}
+		accessor: (acc) => acc.influencerProfile.id,
+		width: 200
 	},
 	{
 		Header: 'SocialAccountId',
 		accessor: 'socialAccountId',
-		width: 200,
-		style: {
-			textAlign: 'center'
-		}
+		width: 200
 	},
 	{
 		id: 'categories',
 		Header: 'Categories',
 		accessor: (acc) => acc.categories.join(','),
-		width: 200,
-		style: {
-			textAlign: 'center'
-		}
+		width: 200
 	},
 	{
 		Header: 'ID',
 		accessor: 'id',
-		width: 200,
-		style: {
-			textAlign: 'center'
-		}
+		width: 200
 	},
 	{
 		id: 'createdAt',
 		Header: 'createdAt',
-		accessor: (acc) => moment(acc.createdAt).format('DD/MM/YYYY-h:mm'),
-		style: {
-			textAlign: 'center'
-		},
+		accessor: (acc) => formatDate(acc.createdAt),
 		width: 200
 	},
 	{
 		id: 'updatedAt',
 		Header: 'UpdatedAt',
-		accessor: (acc) => moment(acc.updatedAt).format('DD/MM/YYYY-h:mm'),
-		style: {
-			textAlign: 'center'
-		},
+		accessor: (acc) => formatDate(acc.updatedAt),
 		width: 200
 	}
 ];
+
